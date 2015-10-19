@@ -66,23 +66,31 @@ class Node
     self.right ? self.right.find_maximum : self
   end
 
-  def remove
-    if self.parent.nil? || (self.left && self.right)
-      if self.right || self.left
-        replacement = right ? right.find_minimum : left.find_maximum
-        self.value = replacement.value
-        self.count = replacement.count
-        self.subtree = replacement.subtree
-        replacement.remove
+  def remove(value, subvalue = nil)
+    if value < self.value
+      self.left.remove(value, subvalue) if self.left
+    elsif value > self.value
+      self.right.remove(value, subvalue) if self.right
+    else
+      if subvalue
+        if self.subtree.remove(subvalue)
+          return self
+        end
       else
-        throw "Removing Root"
+        if self.left && self.right
+          replacement = right.find_minimum
+          self.value = replacement.value
+          self.count = replacement.count
+          self.subtree = replacement.subtree
+          return replacement.remove(value, subvalue)
+        elsif self.parent.left == self
+          self.parent.left = (self.left ? self.left : self.right)
+          return self
+        elsif self.parent.right == self
+          self.parent.right = (self.left ? self.left : self.right)
+          return self
+        end
       end
-    elsif self.left == nil && self.right == nil
-      self.parent.replace_child(self, nil)
-    elsif self.left == nil
-      self.parent.replace_child(self, self.left)
-    elsif self.right == nil
-      self.parent.replace_child(self, self.right)
     end
   end
 end
