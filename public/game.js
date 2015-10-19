@@ -45,7 +45,7 @@ $(function() {
   }
 
   function drawBoard() {
-    $.getJSON('/board', function(resp) {
+    $.getJSON('/board', {min: min, max: max}, function(resp) {
       resp.board.forEach(function(cell) {
         addCell(cell.x, cell.y);
       });

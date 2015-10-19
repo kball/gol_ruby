@@ -50,6 +50,8 @@ class Board
       end
     end
     prune_generation(next_generation)
+    # Only keep one generation around at a time for space constraints
+    self.matrices[@current_generation] = nil;
     @current_generation = next_generation
   end
 
@@ -66,6 +68,14 @@ class Board
     self.to_a.each do |pair|
       puts "(#{pair[:x]}, #{pair[:y]})"
     end
+  end
+
+  def between(min, max)
+    arr = []
+    self.matrices[@current_generation].in_range(min, max, min, max) do |count, x, y|
+      arr.push({x: x, y: y})
+    end
+    arr
   end
 
   def self.initialize_from_io(io)

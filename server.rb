@@ -16,7 +16,11 @@ end
 
 # TODO:  Support scoping by x/y bounds
 get '/board' do
-  json :board => BOARD.to_a
+  if params[:min] && params[:max]
+    json :board => BOARD.between(params[:min].to_i, params[:max].to_i)
+  else
+    json :board => BOARD.to_a
+  end
 end
 
 

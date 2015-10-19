@@ -18,4 +18,9 @@ class SparseMatrix
   def each_with_indices
     raise "Implement in subclass"
   end
+
+  # Yield counts with x & y for items within the range
+  def in_range(xmin, xmax, ymin, ymax)
+    raise "Implement in subclass"
+  end
 end

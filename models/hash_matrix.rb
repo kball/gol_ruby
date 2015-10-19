@@ -27,4 +27,13 @@ class HashMatrix < SparseMatrix
       end
     end
   end
+
+  # Not very efficient in this implementation
+  def in_range(xmin, xmax, ymin, ymax)
+    self.each_with_indices do |count, x, y|
+      if x >= xmin && x <= xmax && y >= ymin && y <= ymax
+        yield count, x, y
+      end
+    end
+  end
 end
