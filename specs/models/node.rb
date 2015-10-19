@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '../../app/models/node')
+require File.join(File.dirname(__FILE__), '../../models/node')
 
 describe Node do
 

@@ -52,9 +52,9 @@ class Board
     end
   end
 
-  def self.initialize_from_file(filename)
+  def self.initialize_from_io(io)
     board = self.new
-    File.open(filename, 'r').each_line do |line|
+    io.each_line do |line|
       resp = line.match(/\(([-\d]+),\s?([-\d]+)\)/)
       puts resp.inspect
       if resp
@@ -65,6 +65,11 @@ class Board
     end
     board.puts_generation
     board
+  end
+  def self.initialize_from_file(filename)
+    File.open(filename, 'r') do |f|
+      self.initialize_from_io(f)
+    end
   end
 
 
