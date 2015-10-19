@@ -1,24 +1,37 @@
-require File.join(File.dirname(__FILE__), 'node')
+require File.join(File.dirname(__FILE__), 'hash_matrix')
 class Board
 
-  attr_reader :trees
-  def initialize
-    @trees = []
+  attr_reader :matrices
+  def initialize(matrix_class = HashMatrix)
+    @matrices = []
     @current_generation = 0
+    @matrix_class = matrix_class
   end
 
   def add_tuple(x, y, generation = nil)
     generation ||= @current_generation
-    tree = self.trees[generation]
-    if tree
-      tree.add_node(x, y)
-    else
-      self.trees[generation] = Node.new(x, y)
-    end
+    self.matrices[generation] ||= @matrix_class.new
+    self.matrices[generation].incr(x, y)
   end
 
   def prune_generation(generation)
-    self.trees[generation].prune(3)
+    deletions = []
+    self.matrices[generation].each_with_indices do |count, x, y|
+      if count == 2
+        if self.matrices[generation - 1].get(x, y)
+          next
+        else
+          deletions.push([x, y])
+        end
+      elsif count == 3
+        next
+      else
+        deletions.push([x, y])
+      end
+    end
+    deletions.each do |pair|
+      self.matrices[generation].delete(*pair)
+    end
   end
 
   def each_neighbor(x, y)
@@ -28,15 +41,12 @@ class Board
       yield pair[0], pair[1]
     end
   end
+
   def run_generation
     next_generation = @current_generation + 1
-    self.trees[@current_generation].each do |x_node|
-      x_node.subtree.each do |y_node|
-        x = x_node.value
-        y = y_node.value
-        self.each_neighbor(x, y) do |x2, y2|
-          self.add_tuple(x2, y2, next_generation)
-        end
+    self.matrices[@current_generation].each_with_indices do |count, x, y|
+      self.each_neighbor(x, y) do |x2, y2|
+        self.add_tuple(x2, y2, next_generation)
       end
     end
     prune_generation(next_generation)
@@ -46,10 +56,8 @@ class Board
   def to_a(generation = nil)
     generation ||= @current_generation
     arr = []
-    self.trees[generation].each do |x_node|
-      x_node.subtree.each do |y_node|
-        arr.push({x: x_node.value, y: y_node.value})
-      end
+    self.matrices[generation].each_with_indices do |count, x, y|
+      arr.push({x: x, y: y})
     end
     arr
   end
