@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="game.js"></script>
+  </head>
+
+  <body>
+    <form action="/new_board" enctype="multipart/form-data" method="post">
+      <p>Upload a new board
+        <input type="file" name="board"></input>
+        <input type="submit"></input>
+      </p>
+    </form>
+    <div id="nav">
+      <button id="next">Next</button>
+    </div>
+
+    <canvas id="game" width="800px" height="800px">
+    </canvas>
+  </body>
+
+</html>

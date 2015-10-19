@@ -43,12 +43,20 @@ class Board
     @current_generation = next_generation
   end
 
-  def puts_generation(generation = nil)
+  def to_a(generation = nil)
     generation ||= @current_generation
+    arr = []
     self.trees[generation].each do |x_node|
       x_node.subtree.each do |y_node|
-        puts "(#{x_node.value}, #{y_node.value})"
+        arr.push({x: x_node.value, y: y_node.value})
       end
+    end
+    arr
+  end
+
+  def puts_generation(generation = nil)
+    self.to_a.each do |pair|
+      puts "(#{pair[:x]}, #{pair[:y]})"
     end
   end
 
@@ -66,6 +74,7 @@ class Board
     board.puts_generation
     board
   end
+
   def self.initialize_from_file(filename)
     File.open(filename, 'r') do |f|
       self.initialize_from_io(f)
