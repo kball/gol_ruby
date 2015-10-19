@@ -1,3 +1,4 @@
+require File.join(File.dirname(__FILE__), 'tree')
 class Node
   attr_accessor :left, :right, :parent, :value, :count, :subtree
 
@@ -7,7 +8,10 @@ class Node
     self.left = nil
     self.right = nil
     self.count = 1
-    self.subtree = Node.new(subvalue) if subvalue
+    if subvalue
+      self.subtree = Tree.new
+      self.subtree.add_node(subvalue)
+    end
   end
 
   def add_node(value, subvalue = nil)
@@ -20,9 +24,11 @@ class Node
     else
       if subvalue
         self.subtree.add_node(subvalue)
+        self.count += 1
       else
         self.count += 1
       end
+      self
     end
   end
 
@@ -32,20 +38,16 @@ class Node
     self.right.each(&block) if self.right
   end
 
+  def between(min, max, &block)
+    self.left.between(min, max, &block) if min < self.value && self.left
+    yield self if min < self.min && max > self.max
+    self.right.between(min, max, &block) if max > self.value && self.left
+  end
+
   def to_a
     a = []
     self.each {|x| a.push(x)}
     a
-  end
-
-  def prune(val_to_keep = 3)
-    self.left.prune(val_to_keep) if self.left
-    if self.subtree
-      self.subtree.prune(val_to_keep)
-    else
-      self.remove unless self.value == val_to_keep
-    end
-    self.right.prune(val_to_keep) if self.right
   end
 
   def replace_child(node, replacement)
@@ -55,6 +57,20 @@ class Node
     elsif self.right == node
       self.right = replacement
       replacement.parent = self if replacement
+    end
+  end
+
+  def find(value, subvalue = nil)
+    if value > self.value
+      self.right.find(value, subvalue) if self.right
+    elsif value < self.value
+      self.left.find(value, subvalue) if self.left
+    else
+      if subvalue
+        self.subtree.find(subvalue)
+      else
+        self
+      end
     end
   end
 
@@ -73,23 +89,27 @@ class Node
       self.right.remove(value, subvalue) if self.right
     else
       if subvalue
-        if self.subtree.remove(subvalue)
+        self.subtree.remove(subvalue)
+      end
+      # if we still have a subtree, don't want to actually remove this node.
+      return unless self.subtree.nil? || self.subtree.size == 0
+
+      if self.parent.nil? || (self.left && self.right)
+        # root node with no children
+        if (!self.left && !self.right)
           return self
         end
-      else
-        if self.left && self.right
-          replacement = right.find_minimum
-          self.value = replacement.value
-          self.count = replacement.count
-          self.subtree = replacement.subtree
-          return replacement.remove(value, subvalue)
-        elsif self.parent.left == self
-          self.parent.left = (self.left ? self.left : self.right)
-          return self
-        elsif self.parent.right == self
-          self.parent.right = (self.left ? self.left : self.right)
-          return self
-        end
+        replacement = self.right ? right.find_minimum : self.left.find_maximum
+        self.value = replacement.value
+        self.count = replacement.count
+        self.subtree = replacement.subtree
+        return replacement.remove(value, subvalue)
+      elsif self.parent.left == self
+        self.parent.left = (self.left ? self.left : self.right)
+        return self
+      elsif self.parent.right == self
+        self.parent.right = (self.left ? self.left : self.right)
+        return self
       end
     end
   end

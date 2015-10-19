@@ -27,4 +27,15 @@ describe Node do
     node.subtree.to_a.size.should == 3
     node.subtree.to_a.map(&:value).should == [2, 4, 5]
   end
+
+  it "Should be able to remove the last node for a subtree" do
+    node = Node.new(1, 5)
+    node.add_node(1, 4)
+    node.add_node(1, 3)
+    node.add_node(1, 2)
+    node.add_node(2, 5)
+    node.remove(2, 5)
+
+    node.to_a.size.should == 1
+  end
 end
