@@ -24,5 +24,6 @@ To run:
 bundle install
 bundle exec ruby server.rb
 
+Then load 'localhost:4567' in a web browser
 
-Input files expected to be text files with one tuple per line.
+Input files expected to be text files with one tuple per line.  Default load uses the sample input.
