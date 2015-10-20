@@ -23,4 +23,8 @@ class SparseMatrix
   def in_range(xmin, xmax, ymin, ymax)
     raise "Implement in subclass"
   end
+
+  def destroy
+    # lifecycle hook for any needed cleanup
+  end
 end

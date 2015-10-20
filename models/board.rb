@@ -1,4 +1,5 @@
 require File.join(File.dirname(__FILE__), 'hash_matrix')
+require File.join(File.dirname(__FILE__), 'file_matrix')
 class Board
 
   attr_reader :matrices
@@ -8,9 +9,17 @@ class Board
     @matrix_class = matrix_class
   end
 
+  def new_matrix_class(generation)
+    if @matrix_class == FileMatrix
+      @matrix_class.new("g#{generation}")
+    else
+      @matrix_class.new
+    end
+  end
+
   def add_tuple(x, y, generation = nil)
     generation ||= @current_generation
-    self.matrices[generation] ||= @matrix_class.new
+    self.matrices[generation] ||= new_matrix_class(generation)
     self.matrices[generation].incr(x, y)
   end
 
@@ -51,6 +60,7 @@ class Board
     end
     prune_generation(next_generation)
     # Only keep one generation around at a time for space constraints
+    self.matrices[@current_generation].destroy
     self.matrices[@current_generation] = nil;
     @current_generation = next_generation
   end

@@ -24,4 +24,15 @@ describe Board do
     board.run_generation
     board.to_a.should == [{x: 1, y: 0}, {x: 1, y: 2}, {x: 2, y: 1}, {x: 2, y: 2}, {x:3, y:1}]
   end
+
+  it "Should work for a glider with a FileMatrix" do
+    board = Board.new(FileMatrix)
+    board.add_tuple(0, 1)
+    board.add_tuple(1, 2)
+    board.add_tuple(2, 0)
+    board.add_tuple(2, 1)
+    board.add_tuple(2, 2)
+    board.run_generation
+    board.to_a.should == [{x: 1, y: 0}, {x: 1, y: 2}, {x: 2, y: 1}, {x: 2, y: 2}, {x:3, y:1}]
+  end
 end
