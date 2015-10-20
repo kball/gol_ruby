@@ -40,8 +40,8 @@ class Node
 
   def between(min, max, &block)
     self.left.between(min, max, &block) if min < self.value && self.left
-    yield self if min < self.min && max > self.max
-    self.right.between(min, max, &block) if max > self.value && self.left
+    block.call(self) if (min <= self.value && max >= self.value)
+    self.right.between(min, max, &block) if max > self.value && self.right
   end
 
   def to_a
