@@ -20,7 +20,7 @@ class TreeMatrix < SparseMatrix
 
   def each_with_indices
     @tree.each do |x_node|
-      x_node.each do |y_node|
+      x_node.subtree.each do |y_node|
         yield y_node.count, x_node.value, y_node.value
       end
     end
@@ -28,7 +28,7 @@ class TreeMatrix < SparseMatrix
 
   def in_range(xmin, xmax, ymin, ymax)
     @tree.between(xmin, xmax).each do |x_node|
-      x_node.between(ymin, ymax).each do |y_node|
+      x_node.subtree.between(ymin, ymax).each do |y_node|
         yield y_node.count, x_node.value, y_node.value
       end
     end

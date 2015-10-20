@@ -82,17 +82,17 @@ class Node
     self.right ? self.right.find_maximum : self
   end
 
-  def remove(value, subvalue = nil)
-    if value < self.value
-      self.left.remove(value, subvalue) if self.left
-    elsif value > self.value
-      self.right.remove(value, subvalue) if self.right
+  def remove(value = nil, subvalue = nil)
+    if value && value < self.value
+      return self.left.remove(value, subvalue) if self.left
+    elsif value && value > self.value
+      return self.right.remove(value, subvalue) if self.right
     else
       if subvalue
         self.subtree.remove(subvalue)
       end
       # if we still have a subtree, don't want to actually remove this node.
-      return unless self.subtree.nil? || self.subtree.size == 0
+      return nil unless self.subtree.nil? || self.subtree.size == 0
 
       if self.parent.nil? || (self.left && self.right)
         # root node with no children
@@ -103,12 +103,15 @@ class Node
         self.value = replacement.value
         self.count = replacement.count
         self.subtree = replacement.subtree
-        return replacement.remove(value, subvalue)
+        replacement.remove()
+        self
       elsif self.parent.left == self
         self.parent.left = (self.left ? self.left : self.right)
+        self.parent.left.parent = self.parent if self.parent.left
         return self
       elsif self.parent.right == self
         self.parent.right = (self.left ? self.left : self.right)
+        self.parent.right.parent = self.parent if self.parent.right
         return self
       end
     end

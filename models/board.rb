@@ -82,7 +82,6 @@ class Board
     board = self.new
     io.each_line do |line|
       resp = line.match(/\(([-\d]+),\s?([-\d]+)\)/)
-      puts resp.inspect
       if resp
         x = resp[1].to_i
         y = resp[2].to_i
