@@ -1,12 +1,17 @@
 require File.join(File.dirname(__FILE__), 'hash_matrix')
 require File.join(File.dirname(__FILE__), 'file_matrix')
+require File.join(File.dirname(__FILE__), 'tree_matrix')
+
+require "active_support/core_ext/string" #for underscore
+
 class Board
 
-  attr_reader :matrices
+  attr_reader :matrices, :matrix_type
   def initialize(matrix_class = HashMatrix)
     @matrices = []
     @current_generation = 0
     @matrix_class = matrix_class
+    @matrix_type = matrix_class.name.underscore.split('_').first
   end
 
   def new_matrix_class(generation)
@@ -88,8 +93,19 @@ class Board
     arr
   end
 
-  def self.initialize_from_io(io)
-    board = self.new
+  def self.matrix_class_from_type(type)
+    case type
+    when "tree"
+      TreeMatrix
+    when "file"
+      FileMatrix
+    else
+      HashMatrix
+    end
+  end
+
+  def self.initialize_from_io(io, matrix_type = nil)
+    board = self.new(matrix_class_from_type(matrix_type))
     io.each_line do |line|
       resp = line.match(/\(([-\d]+),\s?([-\d]+)\)/)
       if resp
@@ -102,9 +118,9 @@ class Board
     board
   end
 
-  def self.initialize_from_file(filename)
+  def self.initialize_from_file(filename, matrix_type = nil)
     File.open(filename, 'r') do |f|
-      self.initialize_from_io(f)
+      self.initialize_from_io(f, matrix_type)
     end
   end
 

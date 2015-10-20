@@ -6,11 +6,15 @@ require './models/board'
 BOARD = Board.initialize_from_file('test.txt')
 
 get '/' do
-  erb :index
+  erb :index, locals: {matrix_type: BOARD.matrix_type}
 end
 
 post '/new_board' do
-  BOARD = Board.initialize_from_io(params['board'][:tempfile])
+  if params['board']
+    BOARD = Board.initialize_from_io(params['board'][:tempfile], params['matrix_type'])
+  else
+    BOARD = Board.initialize_from_file('test.txt', params['matrix_type'])
+  end
   redirect '/'
 end
 

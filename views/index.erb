@@ -8,7 +8,15 @@
     <form action="/new_board" enctype="multipart/form-data" method="post">
       <p>Upload a new board
         <input type="file" name="board"></input>
-        <input type="submit"></input>
+      </p>
+      <p>
+      Matrix Implementationa
+      <% ['hash', 'tree', 'file'].each do |type| %>
+        <input type="radio" id="matrix_type_<%= type %>" name="matrix_type"
+               value="<%= type %>" <%= matrix_type == type ? 'checked="checked"' : '' %>>
+        <label for="matrix_type_<%= type %>"><%= type.capitalize %></label>
+      <% end %>
+      <input type="submit"></input>
       </p>
     </form>
     <div id="nav">
