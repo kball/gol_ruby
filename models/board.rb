@@ -1,6 +1,5 @@
 require File.join(File.dirname(__FILE__), 'hash_matrix')
 require File.join(File.dirname(__FILE__), 'file_matrix')
-require File.join(File.dirname(__FILE__), 'tree_matrix')
 
 require "active_support/core_ext/string" #for underscore
 
@@ -95,8 +94,6 @@ class Board
 
   def self.matrix_class_from_type(type)
     case type
-    when "tree"
-      TreeMatrix
     when "file"
       FileMatrix
     else

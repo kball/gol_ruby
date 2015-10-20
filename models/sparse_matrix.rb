@@ -1,6 +1,6 @@
 class SparseMatrix
   # Interface class for defining how we want to interact with our sparse matrices.
-  # Implementations will be HashMatrix and TreeMatrix
+  # Implementations are HashMatrix and FileMatrix
 
   def get(x, y)
     raise "Implement in subclass"

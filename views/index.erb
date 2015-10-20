@@ -11,7 +11,7 @@
       </p>
       <p>
       Matrix Implementationa
-      <% ['hash', 'tree', 'file'].each do |type| %>
+      <% ['hash', 'file'].each do |type| %>
         <input type="radio" id="matrix_type_<%= type %>" name="matrix_type"
                value="<%= type %>" <%= matrix_type == type ? 'checked="checked"' : '' %>>
         <label for="matrix_type_<%= type %>"><%= type.capitalize %></label>
