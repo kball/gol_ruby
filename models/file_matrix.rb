@@ -33,7 +33,7 @@ class FileMatrix < SparseMatrix
   end
 
   def _each_in_bucket(x_bucket)
-    hash = _read_contents(x_bucket, 0)
+    hash = _read_contents(x_from_bucket(x_bucket), 0)
     hash.each do |x, y_hash|
       y_hash.each do |y, count|
         yield count, x, y
@@ -61,6 +61,10 @@ class FileMatrix < SparseMatrix
     x / 1000
   end
 
+  def x_from_bucket(bucket)
+    bucket * 1000
+  end
+
   # In the future we might want to shard by y range, but for now
   # just do one per x.
   def y_bucket(y)
@@ -71,7 +75,9 @@ class FileMatrix < SparseMatrix
   end
 
   def _read_file(x, y)
-    File.open(_filename(x, y), 'r').read
+    if File.exists?(_filename(x, y))
+      File.open(_filename(x, y), 'r').read
+    end
   end
 
   def _read_contents(x, y)
@@ -106,13 +112,14 @@ class FileMatrix < SparseMatrix
       _write_buffer_if_dirty
       hash = _read_contents(x, y)
       _set_current_buffer(x, y, hash)
+      hash
     end
   end
 
   def _current_buffer_for(x, y)
     f1 = _filename(x, y)
     f2 = _filename(@current_buffer[:x], @current_buffer[:y])
-    if f1 = f2
+    if f1 == f2
       @current_buffer
     end
   end
@@ -131,7 +138,7 @@ class FileMatrix < SparseMatrix
 
   def destroy
     @file_blocks.keys.sort.each do |x_block|
-      File.delete(_filename(x_block, 0))
+      File.delete(_filename(x_from_bucket(x_block), 0))
     end
   end
 
